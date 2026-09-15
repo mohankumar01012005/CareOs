@@ -3,6 +3,7 @@ const router = express.Router();
 
 const careCircleController = require("../controllers/careCircle.controller");
 const invitationController = require("../controllers/invitation.controller");
+const medicationRoutes = require("./medication.routes");
 const { authenticate } = require("../middleware/auth.middleware");
 const {
   verifyCircleMembership,
@@ -100,4 +101,12 @@ router.delete(
   invitationController.revokeInvitation
 );
 
+/**
+ * Mount Circle-Scoped Medication & Dose Tracking Routes
+ * Base path: /api/care-circles/:circleId/medications
+ */
+router.use("/:circleId/medications", medicationRoutes);
+
 module.exports = router;
+
+

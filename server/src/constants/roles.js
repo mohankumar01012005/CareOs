@@ -81,6 +81,68 @@ const ALL_INVITATION_STATUSES = Object.freeze(Object.values(INVITATION_STATUS));
 
 const DEFAULT_INVITATION_EXPIRY_HOURS = 48;
 
+const MEDICATION_STATUS = Object.freeze({
+  ACTIVE: "ACTIVE",
+  PAUSED: "PAUSED",
+  DISCONTINUED: "DISCONTINUED",
+});
+
+const ALL_MEDICATION_STATUSES = Object.freeze(Object.values(MEDICATION_STATUS));
+
+const DOSE_STATUS = Object.freeze({
+  TAKEN: "TAKEN",
+  SKIPPED: "SKIPPED",
+  MISSED: "MISSED",
+  RESCHEDULED: "RESCHEDULED",
+});
+
+const ALL_DOSE_STATUSES = Object.freeze(Object.values(DOSE_STATUS));
+
+const TIME_SLOTS = Object.freeze([
+  "morning",
+  "afternoon",
+  "evening",
+  "night",
+  "as_needed",
+]);
+
+const MEDICATION_FORMS = Object.freeze([
+  "tablet",
+  "capsule",
+  "syrup",
+  "injection",
+  "drops",
+  "ointment",
+  "inhaler",
+  "powder",
+  "other",
+]);
+
+const MEDICATION_FREQUENCIES = Object.freeze([
+  "once_daily",
+  "twice_daily",
+  "thrice_daily",
+  "four_times_daily",
+  "as_needed",
+  "every_other_day",
+  "weekly",
+  "custom",
+]);
+
+const FOOD_TIMINGS = Object.freeze([
+  "with_meal",
+  "before_meal",
+  "after_meal",
+  "empty_stomach",
+  "no_restriction",
+]);
+
+const MEDICATION_MANAGER_ROLES = Object.freeze([
+  CAREOS_ROLES.MAIN_CARETAKER,
+  CAREOS_ROLES.SUB_CARETAKER,
+  CAREOS_ROLES.PAID_DOCTOR,
+]);
+
 module.exports = {
   CAREOS_ROLES,
   ALL_ROLES,
@@ -97,4 +159,14 @@ module.exports = {
   INVITATION_STATUS,
   ALL_INVITATION_STATUSES,
   DEFAULT_INVITATION_EXPIRY_HOURS,
+  MEDICATION_STATUS,
+  ALL_MEDICATION_STATUSES,
+  DOSE_STATUS,
+  ALL_DOSE_STATUSES,
+  TIME_SLOTS,
+  MEDICATION_FORMS,
+  MEDICATION_FREQUENCIES,
+  FOOD_TIMINGS,
+  MEDICATION_MANAGER_ROLES,
 };
+
