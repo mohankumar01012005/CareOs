@@ -180,6 +180,61 @@ const TASK_TIME_SLOTS = Object.freeze([
   "anytime",
 ]);
 
+const NOTE_CATEGORIES = Object.freeze([
+  "GENERAL",
+  "HANDOVER",
+  "VITALS_DIET",
+  "NIGHT_ROUTINE",
+  "INCIDENT",
+  "MEDICATION_OBSERVATION",
+  "DOCTOR_VISIT",
+]);
+
+const NOTE_SHIFTS = Object.freeze([
+  "morning",
+  "afternoon",
+  "evening",
+  "night",
+  "none",
+]);
+
+const NOTE_URGENCY = Object.freeze({
+  NORMAL: "NORMAL",
+  IMPORTANT: "IMPORTANT",
+  URGENT: "URGENT",
+});
+
+const ALL_NOTE_URGENCIES = Object.freeze(Object.values(NOTE_URGENCY));
+
+const APPETITE_LEVELS = Object.freeze([
+  "poor",
+  "fair",
+  "good",
+  "excellent",
+]);
+
+const MOOD_LEVELS = Object.freeze([
+  "calm",
+  "happy",
+  "anxious",
+  "irritable",
+  "confused",
+  "tired",
+]);
+
+const BOWEL_MOVEMENT_STATUS = Object.freeze([
+  "none",
+  "normal",
+  "loose",
+  "constipated",
+]);
+
+const NOTE_PIN_ROLES = Object.freeze([
+  CAREOS_ROLES.MAIN_CARETAKER,
+  CAREOS_ROLES.SUB_CARETAKER,
+  CAREOS_ROLES.PAID_DOCTOR,
+]);
+
 module.exports = {
   CAREOS_ROLES,
   ALL_ROLES,
@@ -211,6 +266,14 @@ module.exports = {
   ALL_TASK_PRIORITIES,
   TASK_CATEGORIES,
   TASK_TIME_SLOTS,
+  NOTE_CATEGORIES,
+  NOTE_SHIFTS,
+  NOTE_URGENCY,
+  ALL_NOTE_URGENCIES,
+  APPETITE_LEVELS,
+  MOOD_LEVELS,
+  BOWEL_MOVEMENT_STATUS,
+  NOTE_PIN_ROLES,
 };
 
 
