@@ -2,8 +2,9 @@
  * CareOS RBAC & Circle-Level Authorization Test Suite
  * Automated verification of Implementation 04 requirements
  */
+const path = require("path");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = require("./server");
 const User = require("./src/models/User");

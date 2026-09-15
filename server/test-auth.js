@@ -2,8 +2,9 @@
  * CareOS Backend Authentication Test Suite
  * Automated verification of all 17 auth criteria
  */
+const path = require("path");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = require("./server");
 const User = require("./src/models/User");

@@ -4,6 +4,7 @@ const router = express.Router();
 const careCircleController = require("../controllers/careCircle.controller");
 const invitationController = require("../controllers/invitation.controller");
 const medicationRoutes = require("./medication.routes");
+const careTaskRoutes = require("./careTask.routes");
 const { authenticate } = require("../middleware/auth.middleware");
 const {
   verifyCircleMembership,
@@ -106,6 +107,12 @@ router.delete(
  * Base path: /api/care-circles/:circleId/medications
  */
 router.use("/:circleId/medications", medicationRoutes);
+
+/**
+ * Mount Circle-Scoped Care Task Coordination Routes
+ * Base path: /api/care-circles/:circleId/tasks
+ */
+router.use("/:circleId/tasks", careTaskRoutes);
 
 module.exports = router;
 

@@ -2,9 +2,10 @@
  * CareOS Backend Care Circle Invitation & Member Onboarding Test Suite
  * Automated verification of all 26+ implementation criteria
  */
+const path = require("path");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = require("./server");
 const User = require("./src/models/User");
