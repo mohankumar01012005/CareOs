@@ -5,6 +5,7 @@ const careCircleController = require("../controllers/careCircle.controller");
 const invitationController = require("../controllers/invitation.controller");
 const medicationRoutes = require("./medication.routes");
 const careTaskRoutes = require("./careTask.routes");
+const careNoteRoutes = require("./careNote.routes");
 const { authenticate } = require("../middleware/auth.middleware");
 const {
   verifyCircleMembership,
@@ -113,6 +114,12 @@ router.use("/:circleId/medications", medicationRoutes);
  * Base path: /api/care-circles/:circleId/tasks
  */
 router.use("/:circleId/tasks", careTaskRoutes);
+
+/**
+ * Mount Circle-Scoped Care Notes & Shift Handover Routes
+ * Base path: /api/care-circles/:circleId/notes
+ */
+router.use("/:circleId/notes", careNoteRoutes);
 
 module.exports = router;
 
