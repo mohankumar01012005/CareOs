@@ -143,6 +143,43 @@ const MEDICATION_MANAGER_ROLES = Object.freeze([
   CAREOS_ROLES.PAID_DOCTOR,
 ]);
 
+const TASK_STATUS = Object.freeze({
+  PENDING: "PENDING",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+});
+
+const ALL_TASK_STATUSES = Object.freeze(Object.values(TASK_STATUS));
+
+const TASK_PRIORITY = Object.freeze({
+  LOW: "LOW",
+  MEDIUM: "MEDIUM",
+  HIGH: "HIGH",
+  URGENT: "URGENT",
+});
+
+const ALL_TASK_PRIORITIES = Object.freeze(Object.values(TASK_PRIORITY));
+
+const TASK_CATEGORIES = Object.freeze([
+  "MEDICATION",
+  "VITALS",
+  "MEALS",
+  "MOBILITY",
+  "APPOINTMENT",
+  "ERRAND",
+  "HYGIENE",
+  "GENERAL",
+]);
+
+const TASK_TIME_SLOTS = Object.freeze([
+  "morning",
+  "afternoon",
+  "evening",
+  "night",
+  "anytime",
+]);
+
 module.exports = {
   CAREOS_ROLES,
   ALL_ROLES,
@@ -168,5 +205,12 @@ module.exports = {
   MEDICATION_FREQUENCIES,
   FOOD_TIMINGS,
   MEDICATION_MANAGER_ROLES,
+  TASK_STATUS,
+  ALL_TASK_STATUSES,
+  TASK_PRIORITY,
+  ALL_TASK_PRIORITIES,
+  TASK_CATEGORIES,
+  TASK_TIME_SLOTS,
 };
+
 
