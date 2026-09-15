@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const authRoutes = require("./src/routes/auth.routes");
+const careCircleRoutes = require("./src/routes/careCircle.routes");
+const invitationRoutes = require("./src/routes/invitation.routes");
 const { notFoundHandler, errorHandler } = require("./src/middleware/error.middleware");
 
 const app = express();
@@ -40,6 +42,8 @@ app.get("/api/health", (req, res) => {
 
 // API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/care-circles", careCircleRoutes);
+app.use("/api/invitations", invitationRoutes);
 
 // Error Handling Middlewares
 app.use(notFoundHandler);
