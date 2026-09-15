@@ -6,6 +6,7 @@ const invitationController = require("../controllers/invitation.controller");
 const { authenticate } = require("../middleware/auth.middleware");
 const {
   verifyCircleMembership,
+  requireCircleRole,
   requireMainCaretaker,
 } = require("../middleware/circleAuth.middleware");
 const validate = require("../middleware/validate.middleware");
