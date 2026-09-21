@@ -6,6 +6,8 @@ const invitationController = require("../controllers/invitation.controller");
 const medicationRoutes = require("./medication.routes");
 const careTaskRoutes = require("./careTask.routes");
 const careNoteRoutes = require("./careNote.routes");
+const careDocumentRoutes = require("./careDocument.routes");
+const healthTrackerRoutes = require("./healthTracker.routes");
 const { authenticate } = require("../middleware/auth.middleware");
 const {
   verifyCircleMembership,
@@ -121,6 +123,20 @@ router.use("/:circleId/tasks", careTaskRoutes);
  */
 router.use("/:circleId/notes", careNoteRoutes);
 
+/**
+ * Mount Circle-Scoped Document Vault Routes
+ * Base path: /api/care-circles/:circleId/documents
+ */
+router.use("/:circleId/documents", careDocumentRoutes);
+
+/**
+ * Mount Circle-Scoped Health & Symptom Tracker Routes
+ * Base path: /api/care-circles/:circleId/health
+ */
+router.use("/:circleId/health", healthTrackerRoutes);
+
 module.exports = router;
+
+
 
 
