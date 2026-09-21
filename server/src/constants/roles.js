@@ -235,6 +235,146 @@ const NOTE_PIN_ROLES = Object.freeze([
   CAREOS_ROLES.PAID_DOCTOR,
 ]);
 
+const DOCUMENT_CATEGORIES = Object.freeze([
+  "INSURANCE",
+  "PRESCRIPTION",
+  "LAB_REPORT",
+  "DISCHARGE_SUMMARY",
+  "GOVERNMENT_ID",
+  "LEGAL_FINANCIAL",
+  "OTHER",
+]);
+
+const DOCUMENT_PRIVACY_LEVELS = Object.freeze({
+  CIRCLE_WIDE: "CIRCLE_WIDE",
+  FAMILY_ONLY: "FAMILY_ONLY",
+  DOCTOR_AND_CARETAKERS: "DOCTOR_AND_CARETAKERS",
+  CARETAKERS_ONLY: "CARETAKERS_ONLY",
+  EMERGENCY_SOS: "EMERGENCY_SOS",
+});
+
+const ALL_DOCUMENT_PRIVACY_LEVELS = Object.freeze(
+  Object.values(DOCUMENT_PRIVACY_LEVELS)
+);
+
+const DOCUMENT_AUDIT_ACTIONS = Object.freeze([
+  "VIEW",
+  "DOWNLOAD",
+  "UPDATE",
+  "DELETE",
+  "EMERGENCY_ACCESS",
+]);
+
+const DOCUMENT_ACCESS_ROLES_MAP = Object.freeze({
+  CIRCLE_WIDE: Object.freeze(ALL_ROLES),
+  FAMILY_ONLY: Object.freeze(FAMILY_ROLES),
+  DOCTOR_AND_CARETAKERS: Object.freeze([
+    CAREOS_ROLES.MAIN_CARETAKER,
+    CAREOS_ROLES.SUB_CARETAKER,
+    CAREOS_ROLES.PAID_DOCTOR,
+  ]),
+  CARETAKERS_ONLY: Object.freeze(CARETAKER_ROLES),
+  EMERGENCY_SOS: Object.freeze(ALL_ROLES),
+});
+
+const VITAL_TYPES = Object.freeze({
+  BLOOD_PRESSURE: "BLOOD_PRESSURE",
+  BLOOD_SUGAR: "BLOOD_SUGAR",
+  HEART_RATE: "HEART_RATE",
+  OXYGEN_SATURATION: "OXYGEN_SATURATION",
+  TEMPERATURE: "TEMPERATURE",
+  WEIGHT: "WEIGHT",
+  RESPIRATORY_RATE: "RESPIRATORY_RATE",
+});
+
+const ALL_VITAL_TYPES = Object.freeze(Object.values(VITAL_TYPES));
+
+const SUGAR_MEAL_CONTEXTS = Object.freeze([
+  "FASTING",
+  "POST_PRANDIAL",
+  "BEFORE_MEAL",
+  "AFTER_MEAL",
+  "BEDTIME",
+  "RANDOM",
+]);
+
+const ALL_SUGAR_MEAL_CONTEXTS = Object.freeze(SUGAR_MEAL_CONTEXTS);
+
+const SYMPTOM_CATEGORIES = Object.freeze({
+  PAIN: "PAIN",
+  DIZZINESS: "DIZZINESS",
+  FATIGUE: "FATIGUE",
+  NAUSEA: "NAUSEA",
+  BREATHING_DIFFICULTY: "BREATHING_DIFFICULTY",
+  FEVER: "FEVER",
+  HEADACHE: "HEADACHE",
+  DIGESTIVE_ISSUE: "DIGESTIVE_ISSUE",
+  MOOD_ALTERATION: "MOOD_ALTERATION",
+  INSOMNIA: "INSOMNIA",
+  CONFUSION: "CONFUSION",
+  MOBILITY_ISSUE: "MOBILITY_ISSUE",
+  OTHER: "OTHER",
+});
+
+const ALL_SYMPTOM_CATEGORIES = Object.freeze(Object.values(SYMPTOM_CATEGORIES));
+
+
+const SYMPTOM_SEVERITIES = Object.freeze({
+  MILD: "MILD",
+  MODERATE: "MODERATE",
+  SEVERE: "SEVERE",
+  CRITICAL: "CRITICAL",
+});
+
+const ALL_SYMPTOM_SEVERITIES = Object.freeze(Object.values(SYMPTOM_SEVERITIES));
+
+const VITAL_ALERT_SEVERITIES = Object.freeze({
+  NORMAL: "NORMAL",
+  WARNING: "WARNING",
+  CRITICAL: "CRITICAL",
+});
+
+const ALL_VITAL_ALERT_SEVERITIES = Object.freeze(
+  Object.values(VITAL_ALERT_SEVERITIES)
+);
+
+const DEFAULT_CLINICAL_BASELINES = Object.freeze({
+  bpSystolicMin: 90,
+  bpSystolicMax: 140,
+  bpDiastolicMin: 60,
+  bpDiastolicMax: 90,
+  heartRateMin: 50,
+  heartRateMax: 100,
+  bloodSugarFastingMin: 70,
+  bloodSugarFastingMax: 130,
+  bloodSugarPostPrandialMin: 80,
+  bloodSugarPostPrandialMax: 180,
+  spO2Min: 94,
+  temperatureMin: 97.0,
+  temperatureMax: 99.5,
+  respiratoryRateMin: 12,
+  respiratoryRateMax: 20,
+  criticalOverrides: Object.freeze({
+    bpSystolicCriticalHigh: 180,
+    bpSystolicCriticalLow: 80,
+    bpDiastolicCriticalHigh: 110,
+    bpDiastolicCriticalLow: 50,
+    spO2CriticalLow: 90,
+    heartRateCriticalHigh: 130,
+    heartRateCriticalLow: 40,
+    bloodSugarCriticalHigh: 300,
+    bloodSugarCriticalLow: 55,
+    temperatureCriticalHigh: 102.5,
+    temperatureCriticalLow: 95.0,
+  }),
+});
+
+const BASELINE_MANAGER_ROLES = Object.freeze([
+  CAREOS_ROLES.MAIN_CARETAKER,
+  CAREOS_ROLES.SUB_CARETAKER,
+  CAREOS_ROLES.PAID_DOCTOR,
+]);
+
 module.exports = {
   CAREOS_ROLES,
   ALL_ROLES,
@@ -274,6 +414,25 @@ module.exports = {
   MOOD_LEVELS,
   BOWEL_MOVEMENT_STATUS,
   NOTE_PIN_ROLES,
+  DOCUMENT_CATEGORIES,
+  DOCUMENT_PRIVACY_LEVELS,
+  ALL_DOCUMENT_PRIVACY_LEVELS,
+  DOCUMENT_AUDIT_ACTIONS,
+  DOCUMENT_ACCESS_ROLES_MAP,
+  VITAL_TYPES,
+  ALL_VITAL_TYPES,
+  SUGAR_MEAL_CONTEXTS,
+  ALL_SUGAR_MEAL_CONTEXTS,
+  SYMPTOM_CATEGORIES,
+  ALL_SYMPTOM_CATEGORIES,
+  SYMPTOM_SEVERITIES,
+  ALL_SYMPTOM_SEVERITIES,
+  VITAL_ALERT_SEVERITIES,
+  ALL_VITAL_ALERT_SEVERITIES,
+  DEFAULT_CLINICAL_BASELINES,
+  BASELINE_MANAGER_ROLES,
 };
+
+
 
 
