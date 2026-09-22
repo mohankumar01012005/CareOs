@@ -113,8 +113,8 @@ export function Sidebar({ isOpen, onClose }) {
                   Your Care Circles
                 </div>
                 {memberships.map((m) => {
-                  const circle = m.careCircle;
-                  const circleId = circle?._id || circle?.id || circle;
+                  const circle = m.careCircle && typeof m.careCircle === 'object' ? m.careCircle : m;
+                  const circleId = circle?.id || circle?._id || m.id || m._id;
                   const cRecipient = circle?.careRecipient;
                   const cName = cRecipient?.fullName || circle?.name || 'Care Circle';
                   const isCurrent = circleId === activeCircleId;

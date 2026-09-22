@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useCareCircle } from '../../hooks/useCareCircle';
 import { useToast } from '../../hooks/useToast';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
@@ -11,6 +12,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { refreshCircles } = useCareCircle();
   const toast = useToast();
 
   const [formData, setFormData] = useState({
@@ -21,7 +23,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname;
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -33,7 +35,8 @@ export function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.email || !formData.password) {
+    const cleanEmail = formData.email.trim();
+    if (!cleanEmail || !formData.password) {
       setErrorMessage('Please enter both email and password.');
       return;
     }
@@ -42,9 +45,20 @@ export function LoginPage() {
     setErrorMessage('');
 
     try {
-      await login(formData.email, formData.password);
+      await login(cleanEmail, formData.password);
       toast.success('Welcome back!');
-      navigate(from, { replace: true });
+
+      // Load user's care circles to determine appropriate destination
+      const userCircles = await refreshCircles();
+      if (userCircles && userCircles.length > 0) {
+        const destination =
+          from && from !== '/login' && from !== '/onboarding/create-circle'
+            ? from
+            : '/dashboard';
+        navigate(destination, { replace: true });
+      } else {
+        navigate('/onboarding/create-circle', { replace: true });
+      }
     } catch (err) {
       setErrorMessage(err.message || 'Invalid email or password.');
     } finally {

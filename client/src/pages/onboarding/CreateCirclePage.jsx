@@ -40,19 +40,44 @@ export function CreateCirclePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullName.trim()) {
+    const cleanFullName = formData.fullName.trim();
+    if (!cleanFullName) {
       setErrorMessage('Please enter the name of the person receiving care.');
       return;
     }
 
-    const circleName = formData.circleName.trim() || `${formData.fullName.trim()}'s Care Circle`;
+    if (cleanFullName.length < 2 || cleanFullName.length > 100) {
+      setErrorMessage('Care recipient full name must be between 2 and 100 characters.');
+      return;
+    }
+
+    const cleanCircleName = formData.circleName.trim();
+    if (cleanCircleName && (cleanCircleName.length < 2 || cleanCircleName.length > 100)) {
+      setErrorMessage('Care Circle name must be between 2 and 100 characters.');
+      return;
+    }
+
+    const circleName = cleanCircleName || `${cleanFullName}'s Care Circle`;
+
+    const emergencyName = formData.emergencyName.trim();
+    const emergencyRelationship = formData.emergencyRelationship.trim();
+    const emergencyPhone = formData.emergencyPhone.trim();
+
+    const emergencyContact =
+      emergencyName || emergencyRelationship || emergencyPhone
+        ? {
+            name: emergencyName || null,
+            relationship: emergencyRelationship || null,
+            phone: emergencyPhone || null,
+          }
+        : undefined;
 
     setIsLoading(true);
     setErrorMessage('');
 
     try {
       const recipientPayload = {
-        fullName: formData.fullName.trim(),
+        fullName: cleanFullName,
         dateOfBirth: formData.dateOfBirth || null,
         gender: formData.gender,
         bloodGroup: formData.bloodGroup,
@@ -62,11 +87,7 @@ export function CreateCirclePage() {
         allergies: formData.allergies
           ? formData.allergies.split(',').map((a) => a.trim()).filter(Boolean)
           : [],
-        emergencyContact: {
-          name: formData.emergencyName.trim() || null,
-          relationship: formData.emergencyRelationship.trim() || null,
-          phone: formData.emergencyPhone.trim() || null,
-        },
+        emergencyContact,
       };
 
       await createCircle({
