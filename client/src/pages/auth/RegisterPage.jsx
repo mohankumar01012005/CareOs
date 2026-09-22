@@ -34,8 +34,22 @@ export function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.password) {
+    const cleanName = formData.name.trim();
+    const cleanEmail = formData.email.trim();
+    const cleanPhone = formData.phone.trim();
+
+    if (!cleanName || !cleanEmail || !formData.password) {
       setErrorMessage('Please fill in all required fields.');
+      return;
+    }
+
+    if (cleanName.length < 2 || cleanName.length > 100) {
+      setErrorMessage('Name must be between 2 and 100 characters.');
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setErrorMessage('Please provide a valid email address.');
       return;
     }
 
@@ -59,10 +73,10 @@ export function RegisterPage() {
 
     try {
       await register({
-        name: formData.name,
-        email: formData.email,
+        name: cleanName,
+        email: cleanEmail,
         password: formData.password,
-        phone: formData.phone || undefined,
+        phone: cleanPhone || undefined,
       });
 
       toast.success('Account created successfully! Let’s set up your Care Circle.');

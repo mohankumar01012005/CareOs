@@ -274,25 +274,29 @@ export function DashboardPage() {
             </div>
 
             {/* Emergency Contact */}
-            {activeRecipient?.emergencyContact?.phone && (
+            {(activeRecipient?.emergencyContact?.name || activeRecipient?.emergencyContact?.phone) && (
               <div className="pt-2 border-t border-outline-variant/30">
                 <div className="p-3 bg-error-container/30 border border-error/20 rounded-xl">
                   <div className="text-[11px] font-bold uppercase tracking-wider text-error">
                     Primary Emergency Contact
                   </div>
                   <div className="text-sm font-bold text-on-surface mt-0.5">
-                    {activeRecipient.emergencyContact.name}{' '}
-                    <span className="text-xs font-normal text-on-surface-variant">
-                      ({activeRecipient.emergencyContact.relationship || 'Contact'})
-                    </span>
+                    {activeRecipient.emergencyContact.name || 'Emergency Contact'}{' '}
+                    {activeRecipient.emergencyContact.relationship && (
+                      <span className="text-xs font-normal text-on-surface-variant">
+                        ({activeRecipient.emergencyContact.relationship})
+                      </span>
+                    )}
                   </div>
-                  <a
-                    href={`tel:${activeRecipient.emergencyContact.phone}`}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline mt-1.5"
-                  >
-                    <Icon name="call" size={14} />
-                    <span>{activeRecipient.emergencyContact.phone}</span>
-                  </a>
+                  {activeRecipient.emergencyContact.phone && (
+                    <a
+                      href={`tel:${activeRecipient.emergencyContact.phone}`}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline mt-1.5"
+                    >
+                      <Icon name="call" size={14} />
+                      <span>{activeRecipient.emergencyContact.phone}</span>
+                    </a>
+                  )}
                 </div>
               </div>
             )}

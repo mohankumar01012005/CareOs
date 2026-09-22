@@ -16,6 +16,20 @@ import {
 
 export const CareCircleContext = createContext(null);
 
+/**
+ * Safely extract Circle ID from various API membership structures
+ */
+function getCircleId(item) {
+  if (!item) return null;
+  return (
+    item.id ||
+    item._id ||
+    item.careCircle?._id ||
+    item.careCircle?.id ||
+    (typeof item.careCircle === 'string' ? item.careCircle : null)
+  );
+}
+
 export function CareCircleProvider({ children }) {
   const { isAuthenticated } = useAuth();
 
@@ -45,20 +59,17 @@ export function CareCircleProvider({ children }) {
 
       if (userMemberships.length > 0) {
         const savedId = localStorage.getItem(STORAGE_KEYS.ACTIVE_CIRCLE_ID);
-        const matchingSaved = userMemberships.find(
-          (m) => (m.careCircle?._id || m.careCircle?.id || m.careCircle) === savedId
-        );
+        const matchingSaved = userMemberships.find((m) => getCircleId(m) === savedId);
 
         if (matchingSaved) {
-          const matchedCircleId = matchingSaved.careCircle?._id || matchingSaved.careCircle?.id || matchingSaved.careCircle;
+          const matchedCircleId = getCircleId(matchingSaved);
           setActiveCircleId(matchedCircleId);
         } else {
-          const firstCircleId =
-            userMemberships[0].careCircle?._id ||
-            userMemberships[0].careCircle?.id ||
-            userMemberships[0].careCircle;
+          const firstCircleId = getCircleId(userMemberships[0]);
           setActiveCircleId(firstCircleId);
-          localStorage.setItem(STORAGE_KEYS.ACTIVE_CIRCLE_ID, firstCircleId);
+          if (firstCircleId) {
+            localStorage.setItem(STORAGE_KEYS.ACTIVE_CIRCLE_ID, firstCircleId);
+          }
         }
       } else {
         setActiveCircleId(null);
@@ -98,11 +109,11 @@ export function CareCircleProvider({ children }) {
     setError(null);
     try {
       const result = await careCircleApi.createCareCircle({ name, recipient });
-      await loadCircles();
-      if (result?.careCircle?.id || result?.careCircle?._id) {
-        const newId = result.careCircle.id || result.careCircle._id;
+      const newId = result?.careCircle?.id || result?.careCircle?._id;
+      if (newId) {
         selectCircle(newId);
       }
+      await loadCircles();
       return result;
     } catch (err) {
       setError(err.message || 'Failed to create care circle');
@@ -115,23 +126,20 @@ export function CareCircleProvider({ children }) {
    */
   const activeMembership = useMemo(() => {
     if (!activeCircleId || memberships.length === 0) return null;
-    return (
-      memberships.find(
-        (m) => (m.careCircle?._id || m.careCircle?.id || m.careCircle) === activeCircleId
-      ) || null
-    );
+    return memberships.find((m) => getCircleId(m) === activeCircleId) || null;
   }, [activeCircleId, memberships]);
 
   const activeCircle = useMemo(() => {
     if (!activeMembership) return null;
-    return typeof activeMembership.careCircle === 'object'
-      ? activeMembership.careCircle
-      : null;
+    if (activeMembership.careCircle && typeof activeMembership.careCircle === 'object') {
+      return activeMembership.careCircle;
+    }
+    return activeMembership;
   }, [activeMembership]);
 
   const activeRecipient = useMemo(() => {
     if (!activeCircle) return null;
-    return typeof activeCircle.careRecipient === 'object'
+    return activeCircle.careRecipient && typeof activeCircle.careRecipient === 'object'
       ? activeCircle.careRecipient
       : null;
   }, [activeCircle]);
@@ -178,3 +186,4 @@ export function CareCircleProvider({ children }) {
 
   return <CareCircleContext.Provider value={value}>{children}</CareCircleContext.Provider>;
 }
+
