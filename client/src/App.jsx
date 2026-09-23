@@ -16,6 +16,7 @@ import { RegisterPage } from './pages/auth/RegisterPage';
 import { AcceptInvitationPage } from './pages/auth/AcceptInvitationPage';
 import { CreateCirclePage } from './pages/onboarding/CreateCirclePage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
+import { TasksPage } from './pages/tasks/TasksPage';
 import { SlicePlaceholderPage } from './pages/placeholder/SlicePlaceholderPage';
 import { NotFoundPage } from './pages/errors/NotFoundPage';
 import { ForbiddenPage } from './pages/errors/ForbiddenPage';
@@ -67,19 +68,8 @@ export default function App() {
       >
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/tasks" element={<TasksPage />} />
 
-        {/* Phase 1 Vertical Slice Placeholders */}
-        <Route
-          path="/tasks"
-          element={
-            <SlicePlaceholderPage
-              title="Care Tasks & Routines"
-              description="Coordinate daily care tasks, recurring routines, test appointments, and assign tasks to family members."
-              icon="check_box"
-              sliceNumber="Care Tasks Slice"
-            />
-          }
-        />
         <Route
           path="/medicines"
           element={
