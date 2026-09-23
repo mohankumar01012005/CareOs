@@ -78,6 +78,45 @@ export const canLogVitalsAndSymptoms = (_role) => true; // All circle members ca
 
 export const canLogCareNotes = (_role) => true; // All circle members can log shift notes
 
+export const INVITATION_ROLES = [
+  ROLES.SUB_CARETAKER,
+  ROLES.FAMILY_MEMBER,
+  ROLES.PAID_DOCTOR,
+  ROLES.PAID_CARETAKER,
+];
+
+export const INVITATION_STATUS = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED',
+};
+
+export const ALL_INVITATION_STATUSES = Object.values(INVITATION_STATUS);
+
+export const INVITATION_STATUS_LABELS = {
+  [INVITATION_STATUS.PENDING]: 'Pending',
+  [INVITATION_STATUS.ACCEPTED]: 'Accepted',
+  [INVITATION_STATUS.EXPIRED]: 'Expired',
+  [INVITATION_STATUS.REVOKED]: 'Revoked',
+};
+
+export const INVITATION_STATUS_BADGE_VARIANTS = {
+  [INVITATION_STATUS.PENDING]: 'primary',
+  [INVITATION_STATUS.ACCEPTED]: 'success',
+  [INVITATION_STATUS.EXPIRED]: 'neutral',
+  [INVITATION_STATUS.REVOKED]: 'error',
+};
+
+export const ROLE_DESCRIPTIONS = {
+  [ROLES.MAIN_CARETAKER]: 'Primary family administrator with full access to manage circle members, invitations, baseline vitals, and care workflows.',
+  [ROLES.SUB_CARETAKER]: 'Co-caretaker who can manage medications, tasks, care notes, and shift handovers.',
+  [ROLES.FAMILY_MEMBER]: 'Family relative with access to view daily care routines, log doses taken, view documents, and add care notes.',
+  [ROLES.CARE_RECEIVER]: 'Patient / care recipient with access to their own daily medication schedule and health timeline.',
+  [ROLES.PAID_DOCTOR]: 'Licensed medical practitioner who can prescribe medications, set clinical baseline vitals, and access medical records.',
+  [ROLES.PAID_CARETAKER]: 'Professional hired nurse / aide who can manage daily tasks, record medication doses, and log shift handovers.',
+};
+
 /**
  * Task Constants & Capabilities
  */
