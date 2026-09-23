@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCareCircle } from '../../hooks/useCareCircle';
 import { useAuth } from '../../hooks/useAuth';
 import { careTaskApi } from '../../api/careTask.api';
+import { medicationApi } from '../../api/medication.api';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -21,28 +22,39 @@ export function DashboardPage() {
   } = useCareCircle();
 
   const [todaySummary, setTodaySummary] = useState(null);
+  const [medicationSummary, setMedicationSummary] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchTaskSummary() {
+    async function fetchDashboardSummaries() {
       if (!activeCircleId) return;
       try {
-        const data = await careTaskApi.getTodayTaskSummary(activeCircleId);
+        const [taskData, medData] = await Promise.allSettled([
+          careTaskApi.getTodayTaskSummary(activeCircleId),
+          medicationApi.getTodaySchedule(activeCircleId),
+        ]);
+
         if (isMounted) {
-          setTodaySummary(data?.summary || null);
+          if (taskData.status === 'fulfilled') {
+            setTodaySummary(taskData.value?.summary || null);
+          }
+          if (medData.status === 'fulfilled') {
+            setMedicationSummary(medData.value?.summary || null);
+          }
         }
       } catch (err) {
-        console.warn('Could not fetch today task summary for dashboard:', err.message);
+        console.warn('Could not fetch dashboard summaries:', err.message);
       }
     }
 
-    fetchTaskSummary();
+    fetchDashboardSummaries();
 
     return () => {
       isMounted = false;
     };
   }, [activeCircleId]);
+
 
 
   const recipientName = activeRecipient?.fullName || activeCircle?.name || 'Care Recipient';
@@ -182,26 +194,62 @@ export function DashboardPage() {
               )}
             </Card>
 
-            {/* Medications Card */}
+            {/* Medications Card (Active Vertical Slice) */}
             <Card
               variant="lowest"
               padding="md"
-              className="hover:border-primary/40 transition-colors cursor-pointer group"
+              className="hover:border-primary transition-all cursor-pointer group shadow-xs hover:shadow-md border-primary/30"
               onClick={() => navigate('/medicines')}
             >
               <div className="flex items-start justify-between">
                 <div className="w-11 h-11 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
                   <Icon name="medication" size={24} />
                 </div>
-                <Icon name="arrow_forward" size={18} className="text-outline group-hover:text-primary transition-colors" />
+                <div className="flex items-center gap-1">
+                  <Badge variant="success" size="sm">Active</Badge>
+                  <Icon name="arrow_forward" size={18} className="text-outline group-hover:text-primary transition-colors" />
+                </div>
               </div>
+
               <h3 className="font-serif text-lg font-bold text-on-surface mt-3">
                 Medicines & Dose Logs
               </h3>
-              <p className="text-xs text-on-surface-variant mt-1">
-                Active prescriptions, schedules, and daily dose adherence tracking.
-              </p>
+
+              {medicationSummary ? (
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-on-surface-variant font-semibold">
+                    <span>
+                      {medicationSummary.totalScheduledCount === 0
+                        ? 'No doses due today'
+                        : `${medicationSummary.totalScheduledCount} doses scheduled today`}
+                    </span>
+                    <span>{medicationSummary.adherenceRate}%</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all duration-300"
+                      style={{ width: `${medicationSummary.adherenceRate}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] text-on-surface-variant">
+                    <span className="text-success font-bold">{medicationSummary.totalCompletedCount} Taken</span>
+                    <span>•</span>
+                    <span className="text-on-surface font-bold">{medicationSummary.pendingCount} Pending</span>
+                    {medicationSummary.totalSkippedCount > 0 && (
+                      <>
+                        <span>•</span>
+                        <span className="text-warning font-bold">{medicationSummary.totalSkippedCount} Skipped</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Active prescriptions, schedules, and daily dose adherence tracking.
+                </p>
+              )}
             </Card>
+
 
 
             {/* Health & Vitals Card */}

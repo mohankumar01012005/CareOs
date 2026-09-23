@@ -17,6 +17,7 @@ import { AcceptInvitationPage } from './pages/auth/AcceptInvitationPage';
 import { CreateCirclePage } from './pages/onboarding/CreateCirclePage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { TasksPage } from './pages/tasks/TasksPage';
+import { MedicationsPage } from './pages/medications/MedicationsPage';
 import { SlicePlaceholderPage } from './pages/placeholder/SlicePlaceholderPage';
 import { NotFoundPage } from './pages/errors/NotFoundPage';
 import { ForbiddenPage } from './pages/errors/ForbiddenPage';
@@ -69,18 +70,8 @@ export default function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/tasks" element={<TasksPage />} />
+        <Route path="/medicines" element={<MedicationsPage />} />
 
-        <Route
-          path="/medicines"
-          element={
-            <SlicePlaceholderPage
-              title="Medicines & Dose Tracking"
-              description="Track prescriptions, dosage schedules, daily pill adherence, and inventory reorder alerts."
-              icon="medication"
-              sliceNumber="Medications Slice"
-            />
-          }
-        />
         <Route
           path="/health"
           element={
