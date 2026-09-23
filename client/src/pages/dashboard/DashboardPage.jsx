@@ -4,6 +4,7 @@ import { useCareCircle } from '../../hooks/useCareCircle';
 import { useAuth } from '../../hooks/useAuth';
 import { careTaskApi } from '../../api/careTask.api';
 import { medicationApi } from '../../api/medication.api';
+import { careNotesApi } from '../../api/careNotes.api';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -23,6 +24,8 @@ export function DashboardPage() {
 
   const [todaySummary, setTodaySummary] = useState(null);
   const [medicationSummary, setMedicationSummary] = useState(null);
+  const [notesSummary, setNotesSummary] = useState(null);
+  const [latestHandover, setLatestHandover] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -30,9 +33,11 @@ export function DashboardPage() {
     async function fetchDashboardSummaries() {
       if (!activeCircleId) return;
       try {
-        const [taskData, medData] = await Promise.allSettled([
+        const [taskData, medData, notesData, handoverData] = await Promise.allSettled([
           careTaskApi.getTodayTaskSummary(activeCircleId),
           medicationApi.getTodaySchedule(activeCircleId),
+          careNotesApi.getDailyNotesSummary(activeCircleId),
+          careNotesApi.getLatestHandover(activeCircleId),
         ]);
 
         if (isMounted) {
@@ -41,6 +46,12 @@ export function DashboardPage() {
           }
           if (medData.status === 'fulfilled') {
             setMedicationSummary(medData.value?.summary || null);
+          }
+          if (notesData.status === 'fulfilled') {
+            setNotesSummary(notesData.value?.summary || null);
+          }
+          if (handoverData.status === 'fulfilled') {
+            setLatestHandover(handoverData.value?.note || null);
           }
         }
       } catch (err) {
@@ -273,25 +284,62 @@ export function DashboardPage() {
               </p>
             </Card>
 
-            {/* Care Notes Card */}
+            {/* Care Notes Card (Active Vertical Slice) */}
             <Card
               variant="lowest"
               padding="md"
-              className="hover:border-primary/40 transition-colors cursor-pointer group"
+              className="hover:border-primary transition-all cursor-pointer group shadow-xs hover:shadow-md border-primary/30"
               onClick={() => navigate('/notes')}
             >
               <div className="flex items-start justify-between">
-                <div className="w-11 h-11 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
+                <div className="w-11 h-11 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
                   <Icon name="edit_note" size={24} />
                 </div>
-                <Icon name="arrow_forward" size={18} className="text-outline group-hover:text-primary transition-colors" />
+                <div className="flex items-center gap-1">
+                  <Badge variant="success" size="sm">Active</Badge>
+                  <Icon name="arrow_forward" size={18} className="text-outline group-hover:text-primary transition-colors" />
+                </div>
               </div>
+
               <h3 className="font-serif text-lg font-bold text-on-surface mt-3">
                 Care Notes & Handover
               </h3>
-              <p className="text-xs text-on-surface-variant mt-1">
-                Shift observations, meals, mood, and family handover notes.
-              </p>
+
+              {notesSummary ? (
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-on-surface-variant font-semibold">
+                    <span>
+                      {notesSummary.totalNotesCount === 0
+                        ? 'No notes logged today'
+                        : `${notesSummary.totalNotesCount} note${notesSummary.totalNotesCount > 1 ? 's' : ''} logged today`}
+                    </span>
+                    {notesSummary.urgentNotesCount > 0 && (
+                      <span className="text-error font-bold flex items-center gap-0.5">
+                        <Icon name="warning" size={13} />
+                        {notesSummary.urgentNotesCount} Urgent
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] text-on-surface-variant flex-wrap">
+                    <span className="text-primary font-bold">{notesSummary.handoverCount} Handover{notesSummary.handoverCount !== 1 ? 's' : ''}</span>
+                    {notesSummary.vitalsLoggedCount > 0 && (
+                      <>
+                        <span>•</span>
+                        <span className="text-tertiary font-bold">{notesSummary.vitalsLoggedCount} Vitals</span>
+                      </>
+                    )}
+                  </div>
+                  {latestHandover && (
+                    <div className="text-[11px] text-on-surface-variant bg-surface-container-low p-1.5 rounded-md truncate">
+                      <strong className="text-on-surface">Latest Handover:</strong> {latestHandover.title || latestHandover.content}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Shift observations, meals, mood, and family handover notes.
+                </p>
+              )}
             </Card>
           </div>
 

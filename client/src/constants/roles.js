@@ -393,3 +393,150 @@ export const FOOD_TIMING_ICONS = {
   no_restriction: 'schedule',
 };
 
+/**
+ * Care Note & Shift Handover Constants & Capabilities
+ */
+export const NOTE_CATEGORIES = [
+  'GENERAL',
+  'HANDOVER',
+  'VITALS_DIET',
+  'NIGHT_ROUTINE',
+  'INCIDENT',
+  'MEDICATION_OBSERVATION',
+  'DOCTOR_VISIT',
+];
+
+export const NOTE_CATEGORY_LABELS = {
+  GENERAL: 'General Observation',
+  HANDOVER: 'Shift Handover',
+  VITALS_DIET: 'Vitals & Nutrition',
+  NIGHT_ROUTINE: 'Night Routine',
+  INCIDENT: 'Incident Report',
+  MEDICATION_OBSERVATION: 'Medication Note',
+  DOCTOR_VISIT: 'Doctor Consultation',
+};
+
+export const NOTE_CATEGORY_ICONS = {
+  GENERAL: 'notes',
+  HANDOVER: 'published_with_changes',
+  VITALS_DIET: 'monitor_heart',
+  NIGHT_ROUTINE: 'bedtime',
+  INCIDENT: 'warning',
+  MEDICATION_OBSERVATION: 'medication',
+  DOCTOR_VISIT: 'medical_services',
+};
+
+export const NOTE_CATEGORY_BADGE_VARIANTS = {
+  GENERAL: 'neutral',
+  HANDOVER: 'primary',
+  VITALS_DIET: 'tertiary',
+  NIGHT_ROUTINE: 'secondary',
+  INCIDENT: 'error',
+  MEDICATION_OBSERVATION: 'warning',
+  DOCTOR_VISIT: 'doctor',
+};
+
+export const NOTE_SHIFTS = [
+  'morning',
+  'afternoon',
+  'evening',
+  'night',
+  'none',
+];
+
+export const NOTE_SHIFT_LABELS = {
+  morning: 'Morning Shift',
+  afternoon: 'Afternoon Shift',
+  evening: 'Evening Shift',
+  night: 'Night Shift',
+  none: 'No Specific Shift',
+};
+
+export const NOTE_SHIFT_ICONS = {
+  morning: 'wb_sunny',
+  afternoon: 'light_mode',
+  evening: 'wb_twilight',
+  night: 'bedtime',
+  none: 'schedule',
+};
+
+export const NOTE_URGENCY = {
+  NORMAL: 'NORMAL',
+  IMPORTANT: 'IMPORTANT',
+  URGENT: 'URGENT',
+};
+
+export const ALL_NOTE_URGENCIES = Object.values(NOTE_URGENCY);
+
+export const NOTE_URGENCY_LABELS = {
+  [NOTE_URGENCY.NORMAL]: 'Normal',
+  [NOTE_URGENCY.IMPORTANT]: 'Important',
+  [NOTE_URGENCY.URGENT]: 'Urgent Alert',
+};
+
+export const NOTE_URGENCY_BADGE_VARIANTS = {
+  [NOTE_URGENCY.NORMAL]: 'neutral',
+  [NOTE_URGENCY.IMPORTANT]: 'warning',
+  [NOTE_URGENCY.URGENT]: 'error',
+};
+
+export const APPETITE_LEVELS = ['poor', 'fair', 'good', 'excellent'];
+
+export const APPETITE_LABELS = {
+  poor: 'Poor (Little/None)',
+  fair: 'Fair (Half portion)',
+  good: 'Good (Standard meal)',
+  excellent: 'Excellent (Full & hearty)',
+};
+
+export const MOOD_LEVELS = ['calm', 'happy', 'anxious', 'irritable', 'confused', 'tired'];
+
+export const MOOD_LABELS = {
+  calm: 'Calm & Relaxed',
+  happy: 'Happy & Cheerful',
+  anxious: 'Anxious / Restless',
+  irritable: 'Irritable / Agitated',
+  confused: 'Confused / Disoriented',
+  tired: 'Tired / Lethargic',
+};
+
+export const MOOD_ICONS = {
+  calm: 'sentiment_satisfied',
+  happy: 'sentiment_very_satisfied',
+  anxious: 'sentiment_dissatisfied',
+  irritable: 'mood_bad',
+  confused: 'psychology_alt',
+  tired: 'bedtime',
+};
+
+export const BOWEL_MOVEMENT_STATUS = ['none', 'normal', 'loose', 'constipated'];
+
+export const BOWEL_MOVEMENT_LABELS = {
+  none: 'None today',
+  normal: 'Normal',
+  loose: 'Loose / Diarrhea',
+  constipated: 'Constipated / Hard',
+};
+
+export const canPinNotes = (role) =>
+  [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER, ROLES.PAID_DOCTOR].includes(role);
+
+export const canEditNote = (note, user, role) => {
+  if (!note || !user) return false;
+  const authorId = note.author?._id || note.author?.id || note.author;
+  const userId = user._id || user.id;
+  const isAuthor = String(authorId) === String(userId);
+  const isCaretaker = [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER].includes(role);
+  return isAuthor || isCaretaker;
+};
+
+export const canDeleteNote = (note, user, role) => {
+  if (!note || !user) return false;
+  const authorId = note.author?._id || note.author?.id || note.author;
+  const userId = user._id || user.id;
+  const isAuthor = String(authorId) === String(userId);
+  const isCaretaker = [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER].includes(role);
+  return isAuthor || isCaretaker;
+};
+
+

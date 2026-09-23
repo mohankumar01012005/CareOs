@@ -18,6 +18,7 @@ import { CreateCirclePage } from './pages/onboarding/CreateCirclePage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { TasksPage } from './pages/tasks/TasksPage';
 import { MedicationsPage } from './pages/medications/MedicationsPage';
+import { CareNotesPage } from './pages/notes/CareNotesPage';
 import { CareCirclePage } from './pages/circle/CareCirclePage';
 import { SlicePlaceholderPage } from './pages/placeholder/SlicePlaceholderPage';
 import { NotFoundPage } from './pages/errors/NotFoundPage';
@@ -84,17 +85,7 @@ export default function App() {
             />
           }
         />
-        <Route
-          path="/notes"
-          element={
-            <SlicePlaceholderPage
-              title="Care Notes & Handover"
-              description="Log shift observations, daily meal notes, mood assessments, and critical handover alerts."
-              icon="edit_note"
-              sliceNumber="Care Notes Slice"
-            />
-          }
-        />
+        <Route path="/notes" element={<CareNotesPage />} />
         <Route
           path="/documents"
           element={
