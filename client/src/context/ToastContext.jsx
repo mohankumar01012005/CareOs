@@ -10,13 +10,28 @@ export function ToastProvider({ children }) {
   }, []);
 
   const addToast = useCallback((message, type = 'info', duration = 4000) => {
-    const id = Date.now() + Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    let toastMessage = message;
+    let toastType = type;
+    let toastDuration = duration;
 
-    if (duration > 0) {
+    // Defensive normalization if an object was passed: { type, title, message }
+    if (typeof message === 'object' && message !== null) {
+      toastMessage = message.message || message.title || JSON.stringify(message);
+      if (message.type) {
+        toastType = message.type;
+      }
+      if (typeof message.duration === 'number') {
+        toastDuration = message.duration;
+      }
+    }
+
+    const id = Date.now() + Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, message: String(toastMessage || ''), type: toastType }]);
+
+    if (toastDuration > 0) {
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, duration);
+      }, toastDuration);
     }
   }, []);
 

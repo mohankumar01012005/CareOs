@@ -21,7 +21,18 @@ export function ShiftHandoverCard({
   onAcknowledge,
   onLogHandover,
   isAcknowledging,
+  isLoading = false,
 }) {
+  if (isLoading) {
+    return (
+      <Card variant="lowest" padding="lg" className="border border-outline-variant/30 text-center animate-pulse">
+        <div className="w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center mx-auto mb-3" />
+        <div className="h-5 w-48 bg-surface-container-high rounded-md mx-auto mb-2" />
+        <div className="h-4 w-72 bg-surface-container-high rounded-md mx-auto" />
+      </Card>
+    );
+  }
+
   if (!latestHandover) {
     return (
       <Card variant="lowest" padding="lg" className="border border-dashed border-outline-variant/50 text-center">

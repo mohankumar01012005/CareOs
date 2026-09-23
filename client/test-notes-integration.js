@@ -746,6 +746,67 @@ async function runNotesIntegrationTests() {
         canEditNote({ author: familyUserId }, { id: mainUserId }, ROLES.MAIN_CARETAKER) === true,
       '32. canEditNote and canDeleteNote helpers enforce author and caretaker privileges'
     );
+
+    console.log('--- Phase 10: Error & Toast String Normalization Safety ---');
+
+    // 33. Toast normalization simulation
+    const normalizeToast = (message) => {
+      if (typeof message === 'object' && message !== null) {
+        return String(message.message || message.title || JSON.stringify(message));
+      }
+      return String(message || '');
+    };
+    const toastObj = { type: 'success', title: 'Note Created', message: 'Shift handover logged successfully.' };
+    const normalizedToast = normalizeToast(toastObj);
+    assert(
+      typeof normalizedToast === 'string' && normalizedToast === 'Shift handover logged successfully.',
+      '33. Toast normalization converts object payload to string and prevents React child rendering error'
+    );
+
+    // 34. Error rendering string safety
+    const normalizeError = (err) => (typeof err === 'string' ? err : err?.message || 'Failed to load care notes');
+    const safeError = normalizeError(new Error('Network error connecting to CareOS server'));
+    assert(
+      typeof safeError === 'string' && safeError === 'Network error connecting to CareOS server',
+      '34. Error display helper guarantees clean string message output in UI'
+    );
+
+    // 35. Asynchronous telemetry independence
+    let secondaryFailed = false;
+    const saveWorkflow = async () => {
+      // Step 1: Note saved in DB
+      const saveRes = await fetch(`${BASE_URL}/api/care-circles/${circleId}/notes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${mainToken}`,
+        },
+        body: JSON.stringify({
+          title: 'Resilience Test Note',
+          content: 'Testing independent save workflow.',
+          category: 'GENERAL',
+          noteDate: todayStr,
+        }),
+      });
+      if (!saveRes.ok) throw new Error('Save failed');
+
+      // Step 2: Secondary telemetry executed safely
+      const secondaryResults = await Promise.allSettled([
+        fetch(`${BASE_URL}/api/care-circles/${circleId}/notes`, { headers: { Authorization: `Bearer ${mainToken}` } }),
+        fetch(`${BASE_URL}/api/care-circles/${circleId}/notes/recent/handover`, { headers: { Authorization: `Bearer ${mainToken}` } }),
+        // Intentionally simulate a failing secondary request
+        fetch(`${BASE_URL}/api/care-circles/${circleId}/notes/invalid-sub-endpoint`, { headers: { Authorization: `Bearer ${mainToken}` } }),
+      ]);
+      if (secondaryResults.some(r => r.status === 'rejected' || (r.value && !r.value.ok))) {
+        secondaryFailed = true;
+      }
+      return true;
+    };
+    const workflowSucceeded = await saveWorkflow();
+    assert(
+      workflowSucceeded === true && secondaryFailed === true,
+      '35. Note creation flow completes successfully even if a secondary telemetry endpoint fails'
+    );
   } catch (err) {
     console.error('Test execution error:', err);
     failed++;

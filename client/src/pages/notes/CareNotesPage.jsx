@@ -33,7 +33,7 @@ export function CareNotesPage() {
     activeRecipient,
     activeRole,
   } = useCareCircle();
-  const { addToast } = useToast();
+  const toast = useToast();
 
   const getTodayStr = () => new Date().toISOString().split('T')[0];
 
@@ -52,6 +52,7 @@ export function CareNotesPage() {
 
   // Loading & Error states
   const [isLoadingNotes, setIsLoadingNotes] = useState(true);
+  const [isLoadingHandover, setIsLoadingHandover] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [error, setError] = useState(null);
 
@@ -144,33 +145,25 @@ export function CareNotesPage() {
       if (editingNote) {
         const noteId = editingNote._id || editingNote.id;
         const res = await careNotesApi.updateNote(activeCircleId, noteId, payload);
-        addToast({
-          type: 'success',
-          title: 'Note Updated',
-          message: 'Care note updated successfully.',
-        });
+        toast.success('Care note updated successfully.');
         if (selectedNote && (selectedNote._id === noteId || selectedNote.id === noteId)) {
           setSelectedNote(res.note);
         }
       } else {
         await careNotesApi.createNote(activeCircleId, payload);
-        addToast({
-          type: 'success',
-          title: 'Note Created',
-          message: payload.category === 'HANDOVER' ? 'Shift handover logged successfully.' : 'Care note created successfully.',
-        });
+        toast.success(
+          payload.category === 'HANDOVER'
+            ? 'Shift handover logged successfully.'
+            : 'Care note created successfully.'
+        );
       }
 
       setIsFormOpen(false);
       setEditingNote(null);
-      await Promise.all([fetchNotes(), fetchLatestHandover(), fetchDailySummary()]);
+      await Promise.allSettled([fetchNotes(), fetchLatestHandover(), fetchDailySummary()]);
     } catch (err) {
       console.error('Failed to save care note:', err);
-      addToast({
-        type: 'error',
-        title: 'Save Failed',
-        message: err.message || 'Failed to save care note.',
-      });
+      toast.error(err.message || 'Failed to save care note.');
     } finally {
       setIsSaving(false);
     }
@@ -185,11 +178,7 @@ export function CareNotesPage() {
     setIsAcknowledging(true);
     try {
       const res = await careNotesApi.acknowledgeNote(activeCircleId, noteId);
-      addToast({
-        type: 'success',
-        title: 'Acknowledged',
-        message: 'Care note acknowledged successfully.',
-      });
+      toast.success('Care note acknowledged successfully.');
 
       // Update local states
       const updatedNote = res.note;
@@ -204,11 +193,7 @@ export function CareNotesPage() {
       }
     } catch (err) {
       console.error('Failed to acknowledge note:', err);
-      addToast({
-        type: 'error',
-        title: 'Acknowledgment Failed',
-        message: err.message || 'Failed to acknowledge note.',
-      });
+      toast.error(err.message || 'Failed to acknowledge note.');
     } finally {
       setIsAcknowledging(false);
     }
@@ -224,11 +209,7 @@ export function CareNotesPage() {
     setIsPinning(true);
     try {
       const res = await careNotesApi.togglePinNote(activeCircleId, noteId, targetState);
-      addToast({
-        type: 'success',
-        title: targetState ? 'Note Pinned' : 'Note Unpinned',
-        message: targetState ? 'Note pinned to top of the feed.' : 'Note unpinned.',
-      });
+      toast.success(targetState ? 'Note pinned to top of the feed.' : 'Note unpinned.');
 
       const updatedNote = res.note;
       setNotes((prev) =>
@@ -240,11 +221,7 @@ export function CareNotesPage() {
       await fetchNotes();
     } catch (err) {
       console.error('Failed to pin/unpin note:', err);
-      addToast({
-        type: 'error',
-        title: 'Action Failed',
-        message: err.message || 'Failed to update note pin status.',
-      });
+      toast.error(err.message || 'Failed to update note pin status.');
     } finally {
       setIsPinning(false);
     }
@@ -259,25 +236,17 @@ export function CareNotesPage() {
     setIsDeleting(true);
     try {
       await careNotesApi.deleteNote(activeCircleId, noteId);
-      addToast({
-        type: 'success',
-        title: 'Note Deleted',
-        message: 'Care note deleted successfully.',
-      });
+      toast.success('Care note deleted successfully.');
 
       setNotes((prev) => prev.filter((n) => (n._id || n.id) !== noteId));
       if (selectedNote && ((selectedNote._id || selectedNote.id) === noteId)) {
         setSelectedNote(null);
         setIsDetailOpen(false);
       }
-      await Promise.all([fetchLatestHandover(), fetchDailySummary()]);
+      await Promise.allSettled([fetchLatestHandover(), fetchDailySummary()]);
     } catch (err) {
       console.error('Failed to delete note:', err);
-      addToast({
-        type: 'error',
-        title: 'Delete Failed',
-        message: err.message || 'Failed to delete note.',
-      });
+      toast.error(err.message || 'Failed to delete note.');
     } finally {
       setIsDeleting(false);
     }
@@ -438,6 +407,7 @@ export function CareNotesPage() {
             onAcknowledge={handleAcknowledge}
             onLogHandover={handleOpenCreateHandover}
             isAcknowledging={isAcknowledging}
+            isLoading={isLoadingHandover}
           />
         </div>
       )}
@@ -533,7 +503,7 @@ export function CareNotesPage() {
             <div className="p-4 rounded-xl bg-error-container/20 border border-error/30 text-error flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs">
                 <Icon name="error" size={18} />
-                <span>{error}</span>
+                <span>{typeof error === 'string' ? error : error?.message || 'Failed to load care notes'}</span>
               </div>
               <Button
                 variant="ghost"
