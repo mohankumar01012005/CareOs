@@ -18,6 +18,7 @@ import { CreateCirclePage } from './pages/onboarding/CreateCirclePage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { TasksPage } from './pages/tasks/TasksPage';
 import { MedicationsPage } from './pages/medications/MedicationsPage';
+import { CareCirclePage } from './pages/circle/CareCirclePage';
 import { SlicePlaceholderPage } from './pages/placeholder/SlicePlaceholderPage';
 import { NotFoundPage } from './pages/errors/NotFoundPage';
 import { ForbiddenPage } from './pages/errors/ForbiddenPage';
@@ -105,17 +106,8 @@ export default function App() {
             />
           }
         />
-        <Route
-          path="/circle"
-          element={
-            <SlicePlaceholderPage
-              title="Care Circle Members & Invitations"
-              description="Manage family members, sub-caretakers, paid doctors, and nurse permissions."
-              icon="diversity_1"
-              sliceNumber="Care Circle Slice"
-            />
-          }
-        />
+        <Route path="/circle" element={<CareCirclePage />} />
+
         <Route
           path="/notifications"
           element={
