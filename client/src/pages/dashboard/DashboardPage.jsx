@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCareCircle } from '../../hooks/useCareCircle';
 import { useAuth } from '../../hooks/useAuth';
+import { careTaskApi } from '../../api/careTask.api';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -13,10 +14,36 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const {
+    activeCircleId,
     activeCircle,
     activeRecipient,
     activeRole,
   } = useCareCircle();
+
+  const [todaySummary, setTodaySummary] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchTaskSummary() {
+      if (!activeCircleId) return;
+      try {
+        const data = await careTaskApi.getTodayTaskSummary(activeCircleId);
+        if (isMounted) {
+          setTodaySummary(data?.summary || null);
+        }
+      } catch (err) {
+        console.warn('Could not fetch today task summary for dashboard:', err.message);
+      }
+    }
+
+    fetchTaskSummary();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeCircleId]);
+
 
   const recipientName = activeRecipient?.fullName || activeCircle?.name || 'Care Recipient';
   const recipientAge = activeRecipient?.dateOfBirth
@@ -71,7 +98,7 @@ export function DashboardPage() {
         {/* Micro Care Pace Progress */}
         <div className="mt-6 pt-5 border-t border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-tertiary-container/20 text-tertiary flex items-center justify-center shrink-0">
               <Icon name="task_alt" size={22} />
             </div>
             <div className="flex flex-col">
@@ -79,9 +106,11 @@ export function DashboardPage() {
                 <span className="text-sm text-on-surface font-bold">
                   Active Care Dashboard
                 </span>
-                <span className="text-xs text-on-surface-variant">
-                  (Phase 1 Frontend Foundation)
-                </span>
+                {todaySummary && (
+                  <span className="text-xs text-primary font-semibold">
+                    • {todaySummary.completedCount}/{todaySummary.totalCount} tasks completed today
+                  </span>
+                )}
               </div>
               <span className="text-xs text-on-surface-variant">
                 Logged in as <strong className="text-on-surface">{user?.name}</strong> ({ROLE_LABELS[activeRole] || activeRole})
@@ -103,6 +132,56 @@ export function DashboardPage() {
         <div className="lg:col-span-8 space-y-6">
           {/* Quick Access Module Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Care Tasks Card (Active Vertical Slice) */}
+            <Card
+              variant="lowest"
+              padding="md"
+              className="hover:border-primary transition-all cursor-pointer group shadow-xs hover:shadow-md border-primary/30"
+              onClick={() => navigate('/tasks')}
+            >
+              <div className="flex items-start justify-between">
+                <div className="w-11 h-11 rounded-xl bg-tertiary-container/20 text-tertiary flex items-center justify-center group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+                  <Icon name="check_box" size={24} />
+                </div>
+                <div className="flex items-center gap-1">
+                  <Badge variant="success" size="sm">Active</Badge>
+                  <Icon name="arrow_forward" size={18} className="text-outline group-hover:text-tertiary transition-colors" />
+                </div>
+              </div>
+
+              <h3 className="font-serif text-lg font-bold text-on-surface mt-3">
+                Care Tasks & Routines
+              </h3>
+
+              {todaySummary ? (
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-on-surface-variant font-semibold">
+                    <span>
+                      {todaySummary.totalCount === 0
+                        ? 'No tasks due today'
+                        : `${todaySummary.totalCount} tasks scheduled today`}
+                    </span>
+                    <span>{todaySummary.completionPercentage}%</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
+                    <div
+                      className="h-full bg-tertiary rounded-full transition-all duration-300"
+                      style={{ width: `${todaySummary.completionPercentage}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] text-on-surface-variant">
+                    <span className="text-primary font-bold">{todaySummary.completedCount} Done</span>
+                    <span>•</span>
+                    <span className="text-on-surface font-bold">{todaySummary.pendingCount} Pending</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Daily errands, physical therapy, and family assignments.
+                </p>
+              )}
+            </Card>
+
             {/* Medications Card */}
             <Card
               variant="lowest"
@@ -124,26 +203,6 @@ export function DashboardPage() {
               </p>
             </Card>
 
-            {/* Care Tasks Card */}
-            <Card
-              variant="lowest"
-              padding="md"
-              className="hover:border-primary/40 transition-colors cursor-pointer group"
-              onClick={() => navigate('/tasks')}
-            >
-              <div className="flex items-start justify-between">
-                <div className="w-11 h-11 rounded-xl bg-tertiary-container/20 text-tertiary flex items-center justify-center group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
-                  <Icon name="check_box" size={24} />
-                </div>
-                <Icon name="arrow_forward" size={18} className="text-outline group-hover:text-tertiary transition-colors" />
-              </div>
-              <h3 className="font-serif text-lg font-bold text-on-surface mt-3">
-                Care Tasks & Routines
-              </h3>
-              <p className="text-xs text-on-surface-variant mt-1">
-                Daily errands, physical therapy, and family assignments.
-              </p>
-            </Card>
 
             {/* Health & Vitals Card */}
             <Card
