@@ -183,3 +183,174 @@ export const TASK_TIME_SLOT_ICONS = {
   night: 'bedtime',
   anytime: 'schedule',
 };
+
+/**
+ * Medication Constants & Capabilities
+ */
+export const MEDICATION_STATUS = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  DISCONTINUED: 'DISCONTINUED',
+};
+
+export const ALL_MEDICATION_STATUSES = Object.values(MEDICATION_STATUS);
+
+export const MEDICATION_STATUS_LABELS = {
+  [MEDICATION_STATUS.ACTIVE]: 'Active',
+  [MEDICATION_STATUS.PAUSED]: 'Paused',
+  [MEDICATION_STATUS.DISCONTINUED]: 'Discontinued',
+};
+
+export const MEDICATION_STATUS_BADGE_VARIANTS = {
+  [MEDICATION_STATUS.ACTIVE]: 'success',
+  [MEDICATION_STATUS.PAUSED]: 'warning',
+  [MEDICATION_STATUS.DISCONTINUED]: 'neutral',
+};
+
+export const DOSE_STATUS = {
+  TAKEN: 'TAKEN',
+  SKIPPED: 'SKIPPED',
+  MISSED: 'MISSED',
+  RESCHEDULED: 'RESCHEDULED',
+};
+
+export const ALL_DOSE_STATUSES = Object.values(DOSE_STATUS);
+
+export const DOSE_STATUS_LABELS = {
+  [DOSE_STATUS.TAKEN]: 'Taken',
+  [DOSE_STATUS.SKIPPED]: 'Skipped',
+  [DOSE_STATUS.MISSED]: 'Missed',
+  [DOSE_STATUS.RESCHEDULED]: 'Rescheduled',
+  PENDING: 'Pending',
+};
+
+export const DOSE_STATUS_BADGE_VARIANTS = {
+  [DOSE_STATUS.TAKEN]: 'success',
+  [DOSE_STATUS.SKIPPED]: 'warning',
+  [DOSE_STATUS.MISSED]: 'error',
+  [DOSE_STATUS.RESCHEDULED]: 'primary-dim',
+  PENDING: 'neutral',
+};
+
+export const DOSE_STATUS_ICONS = {
+  [DOSE_STATUS.TAKEN]: 'check_circle',
+  [DOSE_STATUS.SKIPPED]: 'do_not_disturb_on',
+  [DOSE_STATUS.MISSED]: 'error',
+  [DOSE_STATUS.RESCHEDULED]: 'update',
+  PENDING: 'radio_button_unchecked',
+};
+
+export const MEDICATION_TIME_SLOTS = [
+  'morning',
+  'afternoon',
+  'evening',
+  'night',
+  'as_needed',
+];
+
+export const MEDICATION_TIME_SLOT_LABELS = {
+  morning: 'Morning',
+  afternoon: 'Afternoon',
+  evening: 'Evening',
+  night: 'Night',
+  as_needed: 'As Needed (PRN)',
+};
+
+export const MEDICATION_TIME_SLOT_DEFAULTS = {
+  morning: '08:00',
+  afternoon: '14:00',
+  evening: '18:00',
+  night: '20:30',
+  as_needed: '',
+};
+
+export const MEDICATION_TIME_SLOT_ICONS = {
+  morning: 'wb_sunny',
+  afternoon: 'light_mode',
+  evening: 'wb_twilight',
+  night: 'bedtime',
+  as_needed: 'healing',
+};
+
+export const MEDICATION_FORMS = [
+  'tablet',
+  'capsule',
+  'syrup',
+  'injection',
+  'drops',
+  'ointment',
+  'inhaler',
+  'powder',
+  'other',
+];
+
+export const MEDICATION_FORM_LABELS = {
+  tablet: 'Tablet',
+  capsule: 'Capsule',
+  syrup: 'Syrup / Liquid',
+  injection: 'Injection',
+  drops: 'Drops',
+  ointment: 'Ointment / Cream',
+  inhaler: 'Inhaler / Nebulizer',
+  powder: 'Powder / Sachet',
+  other: 'Other Form',
+};
+
+export const MEDICATION_FORM_ICONS = {
+  tablet: 'medication',
+  capsule: 'pill',
+  syrup: 'water_bottle',
+  injection: 'vaccines',
+  drops: 'opacity',
+  ointment: 'clean_hands',
+  inhaler: 'air',
+  powder: 'grain',
+  other: 'medical_services',
+};
+
+export const MEDICATION_FREQUENCIES = [
+  'once_daily',
+  'twice_daily',
+  'thrice_daily',
+  'four_times_daily',
+  'as_needed',
+  'every_other_day',
+  'weekly',
+  'custom',
+];
+
+export const MEDICATION_FREQUENCY_LABELS = {
+  once_daily: 'Once Daily (1x)',
+  twice_daily: 'Twice Daily (2x)',
+  thrice_daily: 'Three Times Daily (3x)',
+  four_times_daily: 'Four Times Daily (4x)',
+  as_needed: 'As Needed (PRN)',
+  every_other_day: 'Every Other Day',
+  weekly: 'Weekly',
+  custom: 'Custom Regimen',
+};
+
+export const FOOD_TIMINGS = [
+  'with_meal',
+  'before_meal',
+  'after_meal',
+  'empty_stomach',
+  'no_restriction',
+];
+
+export const FOOD_TIMING_LABELS = {
+  with_meal: 'With Meals',
+  before_meal: 'Before Meals (30m prior)',
+  after_meal: 'After Meals',
+  empty_stomach: 'Empty Stomach (1h before / 2h after)',
+  no_restriction: 'No Food Restrictions',
+};
+
+export const FOOD_TIMING_ICONS = {
+  with_meal: 'restaurant',
+  before_meal: 'fastfood',
+  after_meal: 'dining',
+  empty_stomach: 'no_meals',
+  no_restriction: 'schedule',
+};
+
