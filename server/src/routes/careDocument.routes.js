@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const router = express.Router({ mergeParams: true });
 
 const careDocumentController = require("../controllers/careDocument.controller");
@@ -9,8 +10,20 @@ const { circleIdParamValidationRules } = require("../validators/careCircle.valid
 const {
   documentIdParamValidationRules,
   createDocumentValidationRules,
+  uploadDocumentValidationRules,
   updateDocumentValidationRules,
 } = require("../validators/careDocument.validator");
+const { MAX_DOCUMENT_FILE_SIZE_BYTES } = require("../utils/s3.util");
+
+/**
+ * Configure Multer in-memory storage for encrypted streaming to S3
+ */
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_DOCUMENT_FILE_SIZE_BYTES || 15 * 1024 * 1024,
+  },
+});
 
 // Common pipeline for all circle-scoped document routes:
 // 1. authenticate (JWT)
@@ -25,8 +38,21 @@ router.use(
 );
 
 /**
+ * @route   POST /api/care-circles/:circleId/documents/upload
+ * @desc    Upload an encrypted binary document file directly to S3 vault
+ * @access  Private (All Active Circle Members)
+ */
+router.post(
+  "/upload",
+  upload.single("file"),
+  uploadDocumentValidationRules,
+  validate,
+  careDocumentController.uploadDocumentFile
+);
+
+/**
  * @route   POST /api/care-circles/:circleId/documents
- * @desc    Upload / add a document to the vault
+ * @desc    Create a document reference in the vault (URL or external storage path)
  * @access  Private (All Active Circle Members)
  */
 router.post(
@@ -38,14 +64,14 @@ router.post(
 
 /**
  * @route   GET /api/care-circles/:circleId/documents
- * @desc    List documents with role privacy filtering, categories, search & pagination
+ * @desc    List documents with role & PERSONAL privacy filtering, categories, search & pagination
  * @access  Private (All Active Circle Members)
  */
 router.get("/", careDocumentController.getCircleDocuments);
 
 /**
  * @route   GET /api/care-circles/:circleId/documents/emergency
- * @desc    Get emergency quick-access documents
+ * @desc    Get emergency quick-access documents (excluding non-uploader PERSONAL docs)
  * @access  Private (All Active Circle Members)
  */
 router.get("/emergency", careDocumentController.getEmergencyDocuments);
@@ -59,7 +85,7 @@ router.get("/expiring", careDocumentController.getExpiringDocuments);
 
 /**
  * @route   GET /api/care-circles/:circleId/documents/:docId
- * @desc    Get a single document by ID (with privacy enforcement & audit logging)
+ * @desc    Get a single document by ID (with privacy enforcement & VIEW audit logging)
  * @access  Private (Circle Members with matching role permission or uploader)
  */
 router.get(
@@ -70,8 +96,20 @@ router.get(
 );
 
 /**
+ * @route   GET /api/care-circles/:circleId/documents/:docId/download
+ * @desc    Authorize and generate a short-lived presigned GET download/preview URL
+ * @access  Private (Circle Members with matching role permission or uploader)
+ */
+router.get(
+  "/:docId/download",
+  documentIdParamValidationRules,
+  validate,
+  careDocumentController.getDocumentDownloadUrl
+);
+
+/**
  * @route   PATCH /api/care-circles/:circleId/documents/:docId
- * @desc    Update document metadata (Uploader or Caretakers)
+ * @desc    Update document metadata (Uploader or Caretakers for non-PERSONAL docs)
  * @access  Private (Uploader or Main/Sub Caretaker)
  */
 router.patch(
@@ -84,7 +122,7 @@ router.patch(
 
 /**
  * @route   DELETE /api/care-circles/:circleId/documents/:docId
- * @desc    Delete a document (Uploader or Caretakers)
+ * @desc    Delete a document and its S3 object (Uploader or Caretakers for non-PERSONAL docs)
  * @access  Private (Uploader or Main/Sub Caretaker)
  */
 router.delete(
@@ -96,8 +134,8 @@ router.delete(
 
 /**
  * @route   GET /api/care-circles/:circleId/documents/:docId/audit-logs
- * @desc    Get access audit logs for a document (Caretakers only)
- * @access  Private (Main/Sub Caretakers)
+ * @desc    Get access audit logs for a document (Caretakers only, or uploader for PERSONAL docs)
+ * @access  Private (Main/Sub Caretakers, or uploader for PERSONAL)
  */
 router.get(
   "/:docId/audit-logs",

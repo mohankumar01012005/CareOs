@@ -19,6 +19,7 @@ import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { TasksPage } from './pages/tasks/TasksPage';
 import { MedicationsPage } from './pages/medications/MedicationsPage';
 import { CareNotesPage } from './pages/notes/CareNotesPage';
+import { DocumentsPage } from './pages/documents/DocumentsPage';
 import { CareCirclePage } from './pages/circle/CareCirclePage';
 import { SlicePlaceholderPage } from './pages/placeholder/SlicePlaceholderPage';
 import { NotFoundPage } from './pages/errors/NotFoundPage';
@@ -86,17 +87,7 @@ export default function App() {
           }
         />
         <Route path="/notes" element={<CareNotesPage />} />
-        <Route
-          path="/documents"
-          element={
-            <SlicePlaceholderPage
-              title="Emergency Document Vault"
-              description="Store insurance policies, advance directives, hospital discharge summaries, and medical IDs."
-              icon="description"
-              sliceNumber="Document Vault Slice"
-            />
-          }
-        />
+        <Route path="/documents" element={<DocumentsPage />} />
         <Route path="/circle" element={<CareCirclePage />} />
 
         <Route

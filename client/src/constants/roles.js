@@ -68,11 +68,9 @@ export const canSetClinicalBaselines = (role) =>
 export const canManageTasks = (role) =>
   [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER, ROLES.PAID_CARETAKER].includes(role);
 
-export const canViewDocuments = (role) =>
-  [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER, ROLES.FAMILY_MEMBER, ROLES.PAID_DOCTOR].includes(role);
+export const canViewDocuments = (_role) => true; // All active circle members can access vault subject to privacy level
 
-export const canUploadDocuments = (role) =>
-  [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER, ROLES.PAID_DOCTOR].includes(role);
+export const canUploadDocuments = (_role) => true; // All active circle members can upload documents
 
 export const canLogVitalsAndSymptoms = (_role) => true; // All circle members can log vitals and symptoms
 
@@ -538,5 +536,170 @@ export const canDeleteNote = (note, user, role) => {
   const isCaretaker = [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER].includes(role);
   return isAuthor || isCaretaker;
 };
+
+/**
+ * Document Vault Constants & Capabilities
+ */
+export const DOCUMENT_CATEGORIES = [
+  'INSURANCE',
+  'PRESCRIPTION',
+  'LAB_REPORT',
+  'DISCHARGE_SUMMARY',
+  'GOVERNMENT_ID',
+  'LEGAL_FINANCIAL',
+  'OTHER',
+];
+
+export const DOCUMENT_CATEGORY_LABELS = {
+  INSURANCE: 'Insurance & Mediclaim',
+  PRESCRIPTION: 'Prescription & Rx',
+  LAB_REPORT: 'Lab & Diagnostic Report',
+  DISCHARGE_SUMMARY: 'Discharge Summary',
+  GOVERNMENT_ID: 'Government ID & Proof',
+  LEGAL_FINANCIAL: 'Legal & Advance Directives',
+  OTHER: 'General Document',
+};
+
+export const DOCUMENT_CATEGORY_ICONS = {
+  INSURANCE: 'verified_user',
+  PRESCRIPTION: 'receipt_long',
+  LAB_REPORT: 'biotech',
+  DISCHARGE_SUMMARY: 'local_hospital',
+  GOVERNMENT_ID: 'badge',
+  LEGAL_FINANCIAL: 'gavel',
+  OTHER: 'description',
+};
+
+export const DOCUMENT_CATEGORY_BADGE_VARIANTS = {
+  INSURANCE: 'primary',
+  PRESCRIPTION: 'secondary',
+  LAB_REPORT: 'tertiary',
+  DISCHARGE_SUMMARY: 'doctor',
+  GOVERNMENT_ID: 'neutral',
+  LEGAL_FINANCIAL: 'warning',
+  OTHER: 'neutral',
+};
+
+export const DOCUMENT_PRIVACY_LEVELS = {
+  CIRCLE_WIDE: 'CIRCLE_WIDE',
+  FAMILY_ONLY: 'FAMILY_ONLY',
+  DOCTOR_AND_CARETAKERS: 'DOCTOR_AND_CARETAKERS',
+  CARETAKERS_ONLY: 'CARETAKERS_ONLY',
+  EMERGENCY_SOS: 'EMERGENCY_SOS',
+  PERSONAL: 'PERSONAL',
+};
+
+export const ALL_DOCUMENT_PRIVACY_LEVELS = Object.values(DOCUMENT_PRIVACY_LEVELS);
+
+export const DOCUMENT_PRIVACY_LABELS = {
+  [DOCUMENT_PRIVACY_LEVELS.CIRCLE_WIDE]: 'Circle Wide (All Members)',
+  [DOCUMENT_PRIVACY_LEVELS.FAMILY_ONLY]: 'Family Members Only',
+  [DOCUMENT_PRIVACY_LEVELS.DOCTOR_AND_CARETAKERS]: 'Doctor & Caretakers',
+  [DOCUMENT_PRIVACY_LEVELS.CARETAKERS_ONLY]: 'Caretakers Only',
+  [DOCUMENT_PRIVACY_LEVELS.EMERGENCY_SOS]: 'Emergency SOS (All Members)',
+  [DOCUMENT_PRIVACY_LEVELS.PERSONAL]: 'Personal (Uploader Only)',
+};
+
+export const DOCUMENT_PRIVACY_DESCRIPTIONS = {
+  [DOCUMENT_PRIVACY_LEVELS.CIRCLE_WIDE]: 'Visible to all active circle members, including family, doctors, and aides.',
+  [DOCUMENT_PRIVACY_LEVELS.FAMILY_ONLY]: 'Restricted to family members and primary caretakers. Hidden from doctors & aides.',
+  [DOCUMENT_PRIVACY_LEVELS.DOCTOR_AND_CARETAKERS]: 'Accessible only to licensed doctors and primary/sub caretakers.',
+  [DOCUMENT_PRIVACY_LEVELS.CARETAKERS_ONLY]: 'Confidential to Main and Sub Caretakers only.',
+  [DOCUMENT_PRIVACY_LEVELS.EMERGENCY_SOS]: 'High-priority emergency document instantly accessible to all caregivers in crisis.',
+  [DOCUMENT_PRIVACY_LEVELS.PERSONAL]: 'Strictly private to you. Invisible to all other caretakers, doctors, and family members.',
+};
+
+export const DOCUMENT_PRIVACY_ICONS = {
+  [DOCUMENT_PRIVACY_LEVELS.CIRCLE_WIDE]: 'public',
+  [DOCUMENT_PRIVACY_LEVELS.FAMILY_ONLY]: 'family_restroom',
+  [DOCUMENT_PRIVACY_LEVELS.DOCTOR_AND_CARETAKERS]: 'stethoscope',
+  [DOCUMENT_PRIVACY_LEVELS.CARETAKERS_ONLY]: 'shield_person',
+  [DOCUMENT_PRIVACY_LEVELS.EMERGENCY_SOS]: 'emergency',
+  [DOCUMENT_PRIVACY_LEVELS.PERSONAL]: 'lock',
+};
+
+export const DOCUMENT_PRIVACY_BADGE_VARIANTS = {
+  [DOCUMENT_PRIVACY_LEVELS.CIRCLE_WIDE]: 'neutral',
+  [DOCUMENT_PRIVACY_LEVELS.FAMILY_ONLY]: 'secondary',
+  [DOCUMENT_PRIVACY_LEVELS.DOCTOR_AND_CARETAKERS]: 'doctor',
+  [DOCUMENT_PRIVACY_LEVELS.CARETAKERS_ONLY]: 'warning',
+  [DOCUMENT_PRIVACY_LEVELS.EMERGENCY_SOS]: 'error',
+  [DOCUMENT_PRIVACY_LEVELS.PERSONAL]: 'tertiary',
+};
+
+export const DOCUMENT_AUDIT_ACTIONS = [
+  'VIEW',
+  'DOWNLOAD',
+  'UPLOAD',
+  'UPDATE',
+  'DELETE',
+  'EMERGENCY_ACCESS',
+  'DOWNLOAD_DENIED',
+  'STORAGE_ERROR',
+];
+
+export const DOCUMENT_AUDIT_ACTION_LABELS = {
+  VIEW: 'Viewed Document',
+  DOWNLOAD: 'Downloaded / Presigned Access',
+  UPLOAD: 'Uploaded to Encrypted Vault',
+  UPDATE: 'Updated Metadata',
+  DELETE: 'Deleted Document',
+  EMERGENCY_ACCESS: 'Emergency SOS Access',
+  DOWNLOAD_DENIED: 'Download Access Denied',
+  STORAGE_ERROR: 'Storage System Event',
+};
+
+export const DOCUMENT_AUDIT_ACTION_ICONS = {
+  VIEW: 'visibility',
+  DOWNLOAD: 'download',
+  UPLOAD: 'cloud_upload',
+  UPDATE: 'edit_note',
+  DELETE: 'delete',
+  EMERGENCY_ACCESS: 'emergency',
+  DOWNLOAD_DENIED: 'block',
+  STORAGE_ERROR: 'error',
+};
+
+/**
+ * Document Capability Helpers
+ */
+export const canEditDocument = (doc, user, role) => {
+  if (!doc || !user) return false;
+  const uploaderId = doc.uploadedBy?._id || doc.uploadedBy?.id || doc.uploadedBy;
+  const userId = user._id || user.id;
+  const isUploader = String(uploaderId) === String(userId);
+
+  if (doc.privacyLevel === DOCUMENT_PRIVACY_LEVELS.PERSONAL) {
+    return isUploader;
+  }
+
+  const isCaretaker = [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER].includes(role);
+  return isUploader || isCaretaker;
+};
+
+export const canDeleteDocument = (doc, user, role) => {
+  if (!doc || !user) return false;
+  const uploaderId = doc.uploadedBy?._id || doc.uploadedBy?.id || doc.uploadedBy;
+  const userId = user._id || user.id;
+  const isUploader = String(uploaderId) === String(userId);
+
+  if (doc.privacyLevel === DOCUMENT_PRIVACY_LEVELS.PERSONAL) {
+    return isUploader;
+  }
+
+  const isCaretaker = [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER].includes(role);
+  return isUploader || isCaretaker;
+};
+
+export const canViewAuditLogs = (role, doc = null, user = null) => {
+  if (doc && doc.privacyLevel === DOCUMENT_PRIVACY_LEVELS.PERSONAL) {
+    if (!user) return false;
+    const uploaderId = doc.uploadedBy?._id || doc.uploadedBy?.id || doc.uploadedBy;
+    const userId = user._id || user.id;
+    return String(uploaderId) === String(userId);
+  }
+  return [ROLES.MAIN_CARETAKER, ROLES.SUB_CARETAKER].includes(role);
+};
+
 
 

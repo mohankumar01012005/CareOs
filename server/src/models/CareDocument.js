@@ -4,6 +4,10 @@ const {
   DOCUMENT_PRIVACY_LEVELS,
   ALL_DOCUMENT_PRIVACY_LEVELS,
   DOCUMENT_AUDIT_ACTIONS,
+  STORAGE_PROVIDERS,
+  ALL_STORAGE_PROVIDERS,
+  DOCUMENT_SCAN_STATUS,
+  ALL_DOCUMENT_SCAN_STATUSES,
 } = require("../constants/roles");
 
 /**
@@ -63,6 +67,53 @@ const careDocumentSchema = new mongoose.Schema(
         message: "Invalid privacy level: {VALUE}",
       },
       default: DOCUMENT_PRIVACY_LEVELS.CIRCLE_WIDE,
+      index: true,
+    },
+    storageProvider: {
+      type: String,
+      enum: {
+        values: ALL_STORAGE_PROVIDERS,
+        message: "Invalid storage provider: {VALUE}",
+      },
+      default: STORAGE_PROVIDERS.EXTERNAL_URL,
+      index: true,
+    },
+    s3Bucket: {
+      type: String,
+      default: null,
+    },
+    s3Key: {
+      type: String,
+      default: null,
+      index: true,
+    },
+    s3Region: {
+      type: String,
+      default: "ap-south-1",
+    },
+    s3VersionId: {
+      type: String,
+      default: null,
+    },
+    s3Etag: {
+      type: String,
+      default: null,
+    },
+    originalFileName: {
+      type: String,
+      default: null,
+    },
+    mimeType: {
+      type: String,
+      default: "application/octet-stream",
+    },
+    scanStatus: {
+      type: String,
+      enum: {
+        values: ALL_DOCUMENT_SCAN_STATUSES,
+        message: "Invalid scan status: {VALUE}",
+      },
+      default: DOCUMENT_SCAN_STATUS.CLEAN,
       index: true,
     },
     fileUrl: {

@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { careTaskApi } from '../../api/careTask.api';
 import { medicationApi } from '../../api/medication.api';
 import { careNotesApi } from '../../api/careNotes.api';
+import { careDocumentsApi } from '../../api/careDocuments.api';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -26,6 +27,7 @@ export function DashboardPage() {
   const [medicationSummary, setMedicationSummary] = useState(null);
   const [notesSummary, setNotesSummary] = useState(null);
   const [latestHandover, setLatestHandover] = useState(null);
+  const [docSummary, setDocSummary] = useState({ total: 0, emergency: 0, expiring: 0 });
 
   useEffect(() => {
     let isMounted = true;
@@ -33,11 +35,14 @@ export function DashboardPage() {
     async function fetchDashboardSummaries() {
       if (!activeCircleId) return;
       try {
-        const [taskData, medData, notesData, handoverData] = await Promise.allSettled([
+        const [taskData, medData, notesData, handoverData, docsData, emergencyData, expiringData] = await Promise.allSettled([
           careTaskApi.getTodayTaskSummary(activeCircleId),
           medicationApi.getTodaySchedule(activeCircleId),
           careNotesApi.getDailyNotesSummary(activeCircleId),
           careNotesApi.getLatestHandover(activeCircleId),
+          careDocumentsApi.getCircleDocuments(activeCircleId),
+          careDocumentsApi.getEmergencyDocuments(activeCircleId),
+          careDocumentsApi.getExpiringDocuments(activeCircleId, 30),
         ]);
 
         if (isMounted) {
@@ -52,6 +57,12 @@ export function DashboardPage() {
           }
           if (handoverData.status === 'fulfilled') {
             setLatestHandover(handoverData.value?.note || null);
+          }
+          if (docsData.status === 'fulfilled' || emergencyData.status === 'fulfilled' || expiringData.status === 'fulfilled') {
+            const total = docsData.status === 'fulfilled' ? (docsData.value?.total ?? docsData.value?.count ?? 0) : 0;
+            const emergency = emergencyData.status === 'fulfilled' ? (emergencyData.value?.count ?? 0) : 0;
+            const expiring = expiringData.status === 'fulfilled' ? (expiringData.value?.expiringCount ?? 0) : 0;
+            setDocSummary({ total, emergency, expiring });
           }
         }
       } catch (err) {
@@ -361,8 +372,30 @@ export function DashboardPage() {
                 View Vault
               </Button>
             </div>
-            <p className="text-xs text-on-surface-variant mt-3">
-              Store insurance cards, hospital records, and DNR/advance directives securely for emergency access.
+            
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-container-high text-on-surface text-xs font-semibold">
+                <Icon name="folder" size={15} className="text-primary" />
+                <span>{docSummary.total} Document{docSummary.total !== 1 ? 's' : ''}</span>
+              </span>
+
+              {docSummary.emergency > 0 && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-error-container/40 text-error text-xs font-bold">
+                  <Icon name="emergency" size={15} />
+                  <span>{docSummary.emergency} Emergency Doc{docSummary.emergency !== 1 ? 's' : ''}</span>
+                </span>
+              )}
+
+              {docSummary.expiring > 0 && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-warning/15 text-warning text-xs font-bold">
+                  <Icon name="event_repeat" size={15} />
+                  <span>{docSummary.expiring} Expiring Soon</span>
+                </span>
+              )}
+            </div>
+
+            <p className="text-xs text-on-surface-variant mt-2.5">
+              Securely store insurance cards, hospital records, and DNR/advance directives for rapid emergency access.
             </p>
           </Card>
         </div>
