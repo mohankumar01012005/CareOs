@@ -17,10 +17,13 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@rolldown/binding-wasm32-wasi": "^1.2.8",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
+    "postcss": "^8.5.30",
     "vite": "^8.3.0"
   }
 }
